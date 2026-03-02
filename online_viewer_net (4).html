@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Onboarding & SmartCard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+        :root {
+            --theme-base: #4f46e5;
+            --theme-hover: #4338ca;
+            --theme-border: #c7d2fe;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', '-apple-system', 'BlinkMacSystemFont', sans-serif;
+        }
+
+        body {
+            background-color: #E5E5E5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- CONTENEUR IPHONE UNIQUE --- */
+        .iphone-17 {
+            position: relative;
+            width: 100vw;
+            max-width: 402px;
+            height: 100vh;
+            max-height: 874px;
+            background: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.5s ease;
+        }
+
+        @media (min-width: 500px) {
+            .iphone-17 { border-radius: 55px; }
+        }
+
+        /* --- TRANSITIONS --- */
+        .hidden { display: none !important; }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- STYLE CHAT (ÉCRAN 1) --- */
+        #chatScreen {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #FAFAFA;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 15px 20px;
+            font-size: 15px;
+            line-height: 1.3;
+            animation: fadeIn 0.4s ease-out forwards;
+            opacity: 0;
+        }
+
+        .msg-bot {
+            background: #006C4F;
+            color: #FFFFFF;
+            border-radius: 20px 20px 20px 0px;
+            align-self: flex-start;
+        }
+
+        .msg-user {
+            background: #00281D;
+            color: #FFFFFF;
+            border-radius: 20px 20px 0px 20px;
+            align-self: flex-end;
+        }
+
+        .inline-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #00281D;
+            color: #FFFFFF;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 14px;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+        }
+
+        @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+
+        .typing-indicator {
+            display: flex; gap: 5px; padding: 15px 20px;
+            background: #006C4F; border-radius: 20px 20px 20px 0px;
+            width: fit-content; align-self: flex-start;
+        }
+
+        .dot { width: 8px; height: 8px; background: #fff; border-radius: 50%; animation: bounce 1.4s infinite; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+        /* --- STYLE SMARTCARD (ÉCRAN 2) --- */
+        #summaryScreen {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            background: #FAFAFA;
+        }
+
+        .card-animation { animation: float 4s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1.5deg); }
+        }
+
+        .btn-dynamic-primary { background-color: var(--theme-base); transition: all 0.3s; }
+        .btn-dynamic-primary:hover { background-color: var(--theme-hover); transform: scale(1.02); }
+    </style>
+</head>
+<body>
+
+<div class="iphone-17">
+    
+    <div id="chatScreen">
+        <header class="p-[60px_20px_20px_20px] text-left">
+            <h1 class="text-2xl font-bold">Mon Quotient bancaire...</h1>
+            <p class="text-sm opacity-70">Vos réponses vont nous aider à personnaliser votre carte.</p>
+        </header>
+        <div class="chat-container" id="chat"></div>
+    </div>
+
+    <div id="summaryScreen" class="hidden fade-in">
+        <h1 class="text-3xl font-extrabold text-slate-800 text-center mb-10 tracking-tight">
+            Ma carte<br>Mon expérience
+        </h1>
+
+        <div id="smartCard" class="card-animation w-80 h-48 rounded-2xl shadow-2xl p-5 relative text-white border border-white/20">
+            <div class="flex justify-between items-start">
+                <div class="w-10 h-8 bg-yellow-400 rounded-md opacity-90 shadow-sm"></div>
+                <div class="flex flex-col items-end">
+                    <span class="text-[10px] font-bold tracking-widest bg-white/20 px-2 py-0.5 rounded backdrop-blur-sm">PREMIUM 10€</span>
+                </div>
+            </div>
+            <div class="mt-8 text-lg font-mono tracking-widest">4521 8892 0034 1001</div>
+            <div class="mt-6 flex justify-between items-end">
+                <div class="flex flex-col">
+                    <span class="text-[8px] uppercase opacity-70">Titulaire</span>
+                    <span class="text-sm font-bold tracking-wide">GRAND VOYAGEUR</span>
+                </div>
+                <div class="flex -space-x-2">
+                    <div class="w-8 h-8 bg-white/20 rounded-full border border-white/30"></div>
+                    <div class="w-8 h-8 bg-white/40 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-center text-sm text-slate-500 font-medium mt-10 mb-8 leading-relaxed">
+            Votre "SmartCard" est prête.<br>Conçue par l'IA, validée par vous.
+        </p>
+
+        <div class="flex flex-col w-full px-4 gap-4">
+            <button class="btn-dynamic-primary text-white font-bold py-4 px-8 rounded-full shadow-lg w-full">
+                Souscrire pour 12€ / mois
+            </button>
+            <button id="btnBackToForm" class="group inline-flex items-center justify-center gap-2 text-slate-500 font-semibold py-4 px-6 rounded-full border-2 border-slate-200 bg-white shadow-sm w-full hover:bg-slate-50 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Modifier mes choix
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const chatContainer = document.getElementById('chat');
+    const chatScreen = document.getElementById('chatScreen');
+    const summaryScreen = document.getElementById('summaryScreen');
+    const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    // --- LOGIQUE DU CHAT ---
+
+    function scrollToBottom() { chatContainer.scrollTop = chatContainer.scrollHeight; }
+
+    function showTyping() {
+        const div = document.createElement('div');
+        div.className = 'typing-indicator';
+        div.id = 'typing';
+        div.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+        chatContainer.appendChild(div);
+        scrollToBottom();
+    }
+
+    function removeTyping() {
+        const typing = document.getElementById('typing');
+        if (typing) typing.remove();
+    }
+
+    function addBotMessage(text) {
+        removeTyping();
+        const div = document.createElement('div');
+        div.className = 'msg msg-bot';
+        div.innerText = text;
+        chatContainer.appendChild(div);
+        scrollToBottom();
+    }
+
+    function addUserMessage(text) {
+        const div = document.createElement('div');
+        div.className = 'msg msg-user';
+        div.innerText = text;
+        chatContainer.appendChild(div);
+        scrollToBottom();
+    }
+
+    function showOptions(options, callback) {
+        const container = document.createElement('div');
+        container.className = 'inline-options';
+        options.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn bg-[#00281D] text-white rounded-full px-4 py-2 text-sm';
+            btn.innerText = opt;
+            btn.style.animationDelay = `${i * 0.1}s`;
+            btn.onclick = () => {
+                container.remove();
+                addUserMessage(opt);
+                callback();
+            };
+            container.appendChild(btn);
+        });
+        chatContainer.appendChild(container);
+        scrollToBottom();
+    }
+
+    // --- TRANSITION VERS SMARTCARD ---
+
+    function applyRandomTheme() {
+        const themes = [
+            { g: 'linear-gradient(135deg, #312e81 0%, #6366f1 100%)', b: '#4f46e5', h: '#4338ca', br: '#c7d2fe' },
+            { g: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)', b: '#10b981', h: '#059669', br: '#a7f3d0' },
+            { g: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)', b: '#3b82f6', h: '#2563eb', br: '#bfdbfe' }
+        ];
+        const theme = themes[Math.floor(Math.random() * themes.length)];
+        document.getElementById('smartCard').style.background = theme.g;
+        document.documentElement.style.setProperty('--theme-base', theme.b);
+        document.documentElement.style.setProperty('--theme-hover', theme.h);
+        document.documentElement.style.setProperty('--theme-border', theme.br);
+    }
+
+    async function showSummary() {
+        showTyping();
+        await wait(2000);
+        
+        // Appliquer le thème avant d'afficher
+        applyRandomTheme();
+
+        // Basculer les écrans
+        chatScreen.classList.add('hidden');
+        summaryScreen.classList.remove('hidden');
+    }
+
+    // --- SCÉNARIO ---
+
+    async function startOnboarding() {
+        chatContainer.innerHTML = '';
+        chatScreen.classList.remove('hidden');
+        summaryScreen.classList.add('hidden');
+
+        await wait(500);
+        showTyping();
+        await wait(1500);
+        addBotMessage("Salut, je suis là pour t'aider à créer la meilleure carte possible...");
+        
+        showTyping();
+        await wait(1200);
+        addBotMessage("Voyagez-vous souvent à l'étranger pour le travail ou les loisirs ?");
+        showOptions(["🦈 Beaucoup", "👍 Oui", "🚫 Non"], stepTwo);
+    }
+
+    async function stepTwo() {
+        showTyping();
+        await wait(1500);
+        addBotMessage("D'accord, je vois. Est-ce que tu investis en bourse ?");
+        showOptions(["Oui, bcp 💶", "Non 🧌", "Parfois ...🛸"], showSummary);
+    }
+
+    // Bouton retour
+    document.getElementById('btnBackToForm').onclick = () => {
+        startOnboarding();
+    };
+
+    // Initialisation
+    startOnboarding();
+</script>
+
+</body>
+</html>
